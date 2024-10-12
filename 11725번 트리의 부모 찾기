@@ -1,0 +1,40 @@
+#11725번 트리의 부모 찾기
+#문제 : 루트 없는 트리가 주어진다. 
+#이때, 트리의 루트를 1이라고 정했을 때, 각 노드의 부모를 구하는 프로그램을 작성하시오.
+
+from collections import deque
+
+def find_parents(n, edges):
+    # 트리 생성 (1-based index)
+    tree = [[] for _ in range(n + 1)]
+    for u, v in edges:
+        tree[u].append(v)
+        tree[v].append(u)
+    
+    # 부모 노드를 저장할 리스트
+    parents = [0] * (n + 1)
+    
+    # BFS로 부모를 찾기 위한 큐
+    queue = deque([1])
+    parents[1] = -1  # 루트 노드는 부모가 없으므로 -1로 설정
+    
+    while queue:
+        node = queue.popleft()
+        
+        for neighbor in tree[node]:
+            if parents[neighbor] == 0:  # 아직 부모가 정해지지 않은 경우
+                parents[neighbor] = node  # 부모 설정
+                queue.append(neighbor)
+    
+    return parents[2:]  # 2번 노드부터 부모를 출력 (1번은 루트라 제외)
+
+# 입력 받기
+n = int(input())  # 노드의 수
+edges = [tuple(map(int, input().split())) for _ in range(n - 1)]  # 간선 정보 입력
+
+# 부모 찾기
+result = find_parents(n, edges)
+
+# 결과 출력
+for parent in result:
+    print(parent)

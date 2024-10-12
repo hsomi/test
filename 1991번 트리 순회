@@ -1,0 +1,67 @@
+# 1991번 트리 순회
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+class BinaryTree:
+    def __init__(self):
+        self.nodes = {}
+
+    def add_node(self, value, left, right):
+        if value not in self.nodes:
+            self.nodes[value] = Node(value)
+        if left != '.':
+            self.nodes[left] = Node(left)
+            self.nodes[value].left = self.nodes[left]
+        if right != '.':
+            self.nodes[right] = Node(right)
+            self.nodes[value].right = self.nodes[right]
+
+    def preorder_traversal(self, node):
+        result = []
+        if node:
+            result.append(node.value)
+            result.extend(self.preorder_traversal(node.left))
+            result.extend(self.preorder_traversal(node.right))
+        return result
+
+    def inorder_traversal(self, node):
+        result = []
+        if node:
+            result.extend(self.inorder_traversal(node.left))
+            result.append(node.value)
+            result.extend(self.inorder_traversal(node.right))
+        return result
+
+    def postorder_traversal(self, node):
+        result = []
+        if node:
+            result.extend(self.postorder_traversal(node.left))
+            result.extend(self.postorder_traversal(node.right))
+            result.append(node.value)
+        return result
+
+def solve_tree_traversals(n, data):
+    tree = BinaryTree()
+    for entry in data:
+        tree.add_node(entry[0], entry[1], entry[2])
+    
+    root = tree.nodes['A']
+    
+    preorder_result = ''.join(tree.preorder_traversal(root))
+    inorder_result = ''.join(tree.inorder_traversal(root))
+    postorder_result = ''.join(tree.postorder_traversal(root))
+    
+    return preorder_result, inorder_result, postorder_result
+
+# 입력 예시
+n = int(input())  # 노드의 개수
+data = [input().split() for _ in range(n)]  # 각 노드와 자식 노드 정보 입력
+
+# 결과 출력
+preorder, inorder, postorder = solve_tree_traversals(n, data)
+print(preorder)
+print(inorder)
+print(postorder)

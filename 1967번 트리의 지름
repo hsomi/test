@@ -1,0 +1,50 @@
+# 1967번 트리의 지름
+
+from collections import defaultdict
+
+# 깊이 우선 탐색(DFS)으로 가장 먼 노드와 그 거리 반환
+def dfs(node, graph, visited):
+    stack = [(node, 0)]
+    farthest_node, max_distance = node, 0
+    
+    while stack:
+        current, distance = stack.pop()
+        visited[current] = True
+        
+        if distance > max_distance:
+            max_distance = distance
+            farthest_node = current
+        
+        for neighbor, weight in graph[current]:
+            if not visited[neighbor]:
+                stack.append((neighbor, distance + weight))
+    
+    return farthest_node, max_distance
+
+def find_tree_diameter(n, edges):
+    # 트리 그래프 생성
+    graph = defaultdict(list)
+    for u, v, w in edges:
+        graph[u].append((v, w))
+        graph[v].append((u, w))
+    
+    # 첫 번째 DFS: 임의의 노드(1번 노드)에서 가장 먼 노드 찾기
+    visited = [False] * (n + 1)
+    farthest_node, _ = dfs(1, graph, visited)
+    
+    # 두 번째 DFS: 가장 먼 노드에서 다시 가장 먼 노드 찾기
+    visited = [False] * (n + 1)
+    _, diameter = dfs(farthest_node, graph, visited)
+    
+    return diameter
+
+# 입력 받기
+n = int(input())  # 노드의 개수
+edges = []
+for _ in range(n - 1):
+    u, v, w = input().split()
+    edges.append((ord(u) - ord('A') + 1, ord(v) - ord('A') + 1, int(w)))
+
+# 트리의 지름 구하기
+result = find_tree_diameter(n, edges)
+print(result)

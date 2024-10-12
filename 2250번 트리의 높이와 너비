@@ -1,0 +1,70 @@
+
+# 2250번 트리의 높이와 너비
+
+from collections import deque, defaultdict
+
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+class BinaryTree:
+    def __init__(self):
+        self.nodes = {}
+
+    def add_node(self, value, left, right):
+        if value not in self.nodes:
+            self.nodes[value] = Node(value)
+        if left != '.':
+            self.nodes[left] = Node(left)
+            self.nodes[value].left = self.nodes[left]
+        if right != '.':
+            self.nodes[right] = Node(right)
+            self.nodes[value].right = self.nodes[right]
+
+def level_widths(root):
+    if not root:
+        return 0, 0
+    
+    level_width = defaultdict(int)
+    max_level = 0
+    
+    queue = deque([(root, 1)])  # (노드, 레벨)
+    
+    while queue:
+        node, level = queue.popleft()
+        level_width[level] += 1
+        max_level = max(max_level, level)
+        
+        if node.left:
+            queue.append((node.left, level + 1))
+        if node.right:
+            queue.append((node.right, level + 1))
+    
+    max_width = 0
+    max_width_level = 0
+    
+    for lvl in range(1, max_level + 1):
+        if level_width[lvl] > max_width:
+            max_width = level_width[lvl]
+            max_width_level = lvl
+            
+    return max_width_level, max_width
+
+# 입력 받기
+n = int(input())  # 노드의 개수
+tree = BinaryTree()
+
+for _ in range(n):
+    parent, left, right = input().split()
+    tree.add_node(parent, left, right)
+
+# 루트는 항상 'A'
+root = tree.nodes['A']
+
+# 레벨과 너비 계산
+level, width = level_widths(root)
+
+# 결과 출력
+print(level, width)
